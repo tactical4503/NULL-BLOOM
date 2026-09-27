@@ -1,0 +1,10 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {Fighter} from "../src/engine/fighter.js";
+import {Combat} from "../src/engine/combat.js";
+import {MatchState} from "../src/engine/match.js";
+const attacks={light:{state:"light",startup:1,active:2,recovery:2,damage:10,hitstun:4,knockback:4,launch:0,range:60,height:50}};
+const def={speed:5,attacks};
+test("fighter attack becomes active and can hit once",()=>{const a=new Fighter(def,100,510,1),b=new Fighter(def,150,510,-1);const c=new Combat(a,b);a.startAttack("light");a.update({},b,1/60);a.update({},b,1/60);c.resolve();assert.equal(b.health,90);c.resolve();assert.equal(b.health,90);});
+test("guard blocks damage",()=>{const a=new Fighter(def,100,510,1),b=new Fighter(def,150,510,-1);const c=new Combat(a,b);a.startAttack("light");b.guard=true;a.update({},b,1/60);a.update({},b,1/60);c.resolve();assert.equal(b.health,100);});
+test("match awards rounds and supports restart",()=>{const a=new Fighter(def,100,510,1),b=new Fighter(def,500,510,-1),m=new MatchState(a,b);a.health=100;b.health=0;m.tick();assert.equal(m.p1Wins,1);assert.equal(m.transition,90);m.resetMatch();assert.equal(m.p1Wins,0);assert.equal(m.p2Wins,0);assert.equal(m.finished,false);});
