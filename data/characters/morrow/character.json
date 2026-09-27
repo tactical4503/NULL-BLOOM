@@ -1,0 +1,1 @@
+{"id":"morrow","name":"MORROW","archetype":"grappler","speed":4.1,"height":122,"visual":{"primary":"#75c6a8","secondary":"#4a245f","skin":"#7f5549","accent":"#f0d47a"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
