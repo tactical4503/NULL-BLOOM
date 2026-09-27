@@ -1,0 +1,5 @@
+{
+  "light":{"startup":5,"active":3,"recovery":9,"damage":5,"knockback":2},
+  "heavy":{"startup":11,"active":5,"recovery":18,"damage":12,"knockback":6},
+  "special":{"startup":9,"active":8,"recovery":22,"damage":16,"knockback":8}
+}
