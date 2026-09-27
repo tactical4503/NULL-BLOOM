@@ -1,0 +1,1 @@
+{"id":"meridian","name":"MERIDIAN","archetype":"rushdown","speed":6.5,"height":110,"visual":{"primary":"#65c7dc","secondary":"#453c92","skin":"#b87962","accent":"#f1cf4a"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
