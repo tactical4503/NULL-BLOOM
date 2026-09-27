@@ -1,0 +1,1 @@
+{"id":"vault","name":"VAULT","archetype":"tank","speed":3.8,"height":126,"visual":{"primary":"#9da8aa","secondary":"#34464e","skin":"#795548","accent":"#e0c25a"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
