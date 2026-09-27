@@ -1,0 +1,1 @@
+{"id":"violet","name":"VIOLET","archetype":"zoner","speed":5.4,"height":104,"visual":{"primary":"#9b6cff","secondary":"#1b244e","skin":"#d8a47e","accent":"#69d7d0"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
