@@ -1,0 +1,1 @@
+{"id":"brass","name":"BRASS","archetype":"footsies","speed":4.6,"height":116,"visual":{"primary":"#d4a94a","secondary":"#453a2a","skin":"#8e5e42","accent":"#b9d0c0"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
