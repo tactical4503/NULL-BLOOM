@@ -1,0 +1,17 @@
+{
+  "idle":"animations/idle",
+  "walk":"animations/walk",
+  "run":"animations/run",
+  "jump":"animations/jump",
+  "fall":"animations/fall",
+  "crouch":"animations/crouch",
+  "guard":"animations/guard",
+  "light":"animations/light",
+  "heavy":"animations/heavy",
+  "special":"animations/special",
+  "hit":"animations/hit",
+  "knockdown":"animations/knockdown",
+  "getup":"animations/getup",
+  "victory":"animations/victory",
+  "defeat":"animations/defeat"
+}
