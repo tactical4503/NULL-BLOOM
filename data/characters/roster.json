@@ -1,5 +1,13 @@
 {
-  "version":1,
-  "characters":[],
-  "notes":"Register completed authored fighters here."
+  "version":2,
+  "characters":[
+    {"id":"sol","name":"SOL","archetype":"rushdown","palette":"sunset","style":"fast boxing"},
+    {"id":"morrow","name":"MORROW","archetype":"grappler","palette":"candy","style":"close-range throws"},
+    {"id":"violet","name":"VIOLET","archetype":"zoner","palette":"electric","style":"precision projectiles"},
+    {"id":"brass","name":"BRASS","archetype":"footsies","palette":"night","style":"heavy counterattacks"},
+    {"id":"ringo","name":"RINGO","archetype":"trickster","palette":"candy","style":"unpredictable movement"},
+    {"id":"meridian","name":"MERIDIAN","archetype":"rushdown","palette":"electric","style":"aerial pressure"},
+    {"id":"doll","name":"DOLL","archetype":"puppet","palette":"sunset","style":"setplay"},
+    {"id":"vault","name":"VAULT","archetype":"tank","palette":"night","style":"armored advance"}
+  ]
 }
