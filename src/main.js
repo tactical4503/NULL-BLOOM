@@ -1,40 +1,48 @@
+
 import "./style.css";
 import {runMatch} from "./game.js";
 import {mountCreator} from "./creator.js";
+import {drawFighter} from "./characterVisual.js";
 
 const app=document.querySelector("#app");
-app.innerHTML=`<div class="shell"><header><div class="logo">NULL <i>BLOOM</i></div><div class="build">BUILD 0.3 // ROULETTE ROAD</div></header><main><section class="stage" id="stage"><canvas id="game" width="1200" height="600"></canvas><div class="hud"><div><b>PLAYER 1</b><strong id="hp1">100</strong><small id="wins1">○ ○</small></div><div class="timer" id="timer">99</div><div class="p2hud"><b>CPU</b><strong id="hp2">100</strong><small id="wins2">○ ○</small></div></div><div id="roundMessage" class="round-message">FIGHT!</div><div class="controls">A/D MOVE · W JUMP · S CROUCH · H GUARD · J LIGHT · K HEAVY · L SPECIAL</div></section><nav><button data-mode="versus">VERSUS</button><button data-mode="training">TRAINING</button><button data-mode="creator">CREATOR</button><button data-mode="restart">RESTART</button></nav><section id="panel"><h2>ROULETTE ROAD</h2><p>NULL BLOOM is now staged on a moving casino transport truck racing through Roulette Road.</p></section></main></div>`;
+const characters=[
+ {id:"sol",name:"SOL",archetype:"RUSHDOWN",style:"Fast boxing",portrait:new URL("../assets/characters/sol/portrait.svg",import.meta.url).href},
+ {id:"morrow",name:"MORROW",archetype:"GRAPPLER",style:"Close-range throws",portrait:new URL("../assets/characters/morrow/portrait.svg",import.meta.url).href}
+];
+app.innerHTML=[
+'<div class="app-shell">',
+'<div id="menu" class="screen active"><div class="menu-backdrop"></div><div class="menu-copy"><div class="eyebrow">NULL BLOOM // ARCADE EDITION</div><h1>NULL <em>BLOOM</em></h1><p class="tagline">TWO FIGHTERS. ONE MOVING ROAD. NO SAFE BETS.</p><div class="menu-buttons"><button class="primary" data-menu="fight">FIGHT</button><button data-menu="training">TRAINING</button><button data-menu="creator">FIGHTER CREATOR</button><button data-menu="howto">HOW TO PLAY</button></div><div class="menu-footer">BUILD 0.5 // ROULETTE ROAD // LOCAL ARCADE</div></div></div>',
+'<div id="select" class="screen"><div class="screen-top"><button class="back" data-back="menu">← BACK</button><div><span class="eyebrow">VERSUS</span><h2>CHOOSE YOUR FIGHTER</h2></div><div class="mode-toggle"><button class="selected" data-side-mode="cpu">CPU</button><button data-side-mode="local">2P</button></div></div><div class="select-layout"><div class="side-picker"><span>PLAYER 1</span><strong id="p1Name">SOL</strong><small id="p1Style">RUSHDOWN</small></div><div id="characterCards" class="character-cards"></div><div class="side-picker p2"><span id="p2Label">CPU</span><strong id="p2Name">MORROW</strong><small id="p2Style">GRAPPLER</small></div></div><button id="launchFight" class="launch">START FIGHT →</button></div>',
+'<div id="gameScreen" class="screen"><header class="game-header"><div class="game-logo">NULL <i>BLOOM</i></div><div class="game-stage-title">ROULETTE ROAD</div><button id="pauseBtn">PAUSE</button></header><main class="match-wrap"><section class="match-stage"><canvas id="game" width="1200" height="600" aria-label="NULL BLOOM fighting arena"></canvas><div class="hud"><div class="fighter-hud p1"><div class="hud-name"><b id="hudP1">SOL</b><span id="wins1">○ ○</span></div><div class="health"><i id="hp1"></i></div></div><div class="round-clock" id="timer">99</div><div class="fighter-hud p2"><div class="hud-name"><b id="hudP2">MORROW</b><span id="wins2">○ ○</span></div><div class="health"><i id="hp2"></i></div></div></div><div id="roundMessage" class="round-message">READY</div><div id="pauseOverlay" class="pause-overlay hidden"><div><span class="eyebrow">MATCH PAUSED</span><h2>ROULETTE ROAD</h2><button id="resumeBtn" class="primary">RESUME</button><button id="restartBtn">RESTART MATCH</button><button id="quitBtn">QUIT TO MENU</button></div></div><div class="control-strip" id="controlStrip"></div></section><section class="match-tools"><button id="matchRestart">RESTART</button><button id="matchTraining">TRAINING</button><button id="matchMenu">MAIN MENU</button><div id="trainingReadout" class="training-readout hidden"></div></section></main></div>',
+'<div id="info" class="screen"><div class="info-panel"><button class="back" data-back="menu">← BACK</button><span class="eyebrow">FIELD MANUAL</span><h2>HOW TO PLAY</h2><div class="how-grid"><div><b>MOVE</b><p>A / D</p></div><div><b>JUMP</b><p>W</p></div><div><b>CROUCH</b><p>S</p></div><div><b>GUARD</b><p>H</p></div><div><b>LIGHT</b><p>J</p></div><div><b>HEAVY</b><p>K</p></div><div><b>SPECIAL</b><p>L</p></div><div><b>RESET</b><p>R</p></div></div><p class="muted">Player 2 local controls: Arrow keys to move, Numpad 0 guard, Numpad 1 light, Numpad 2 heavy, Numpad 3 special.</p></div></div>',
+'<div id="creatorScreen" class="screen"><div class="creator-shell"><button class="back" id="creatorBack">← BACK</button><div id="creatorMount"></div></div></div>',
+'</div>'
+].join("");
 
-const canvas=document.querySelector("#game"),ctx=canvas.getContext("2d"),hp1=document.querySelector("#hp1"),hp2=document.querySelector("#hp2"),timer=document.querySelector("#timer"),msg=document.querySelector("#roundMessage"),wins1=document.querySelector("#wins1"),wins2=document.querySelector("#wins2");
-const stageImage=new Image();
-stageImage.src=new URL("../assets/stages/roulette-road.jpg",import.meta.url).href;
-const render=(p1,p2,combat,match)=>{
-  ctx.clearRect(0,0,1200,600);
-  if(stageImage.complete&&stageImage.naturalWidth){
-    ctx.imageSmoothingEnabled=true;
-    ctx.drawImage(stageImage,0,0,1200,600);
-  } else {
-    ctx.fillStyle="#111";ctx.fillRect(0,0,1200,600);
-  }
-  if(combat.lastHit){
-    ctx.save();
-    ctx.globalAlpha=.9;
-    ctx.font="900 34px Impact,Arial";
-    ctx.fillStyle=combat.lastHit.blocked?"#8ed1ff":"#fff1a8";
-    ctx.textAlign="center";
-    ctx.fillText(combat.lastHit.blocked?"BLOCK!":"HIT!",600,180);
-    ctx.restore();
-  }
-  hp1.textContent=Math.ceil(p1.health);hp2.textContent=Math.ceil(p2.health);timer.textContent=Math.ceil(match.time);
-  wins1.textContent="● ".repeat(match.p1Wins)+"○ ".repeat(Math.max(0,2-match.p1Wins));
-  wins2.textContent="● ".repeat(match.p2Wins)+"○ ".repeat(Math.max(0,2-match.p2Wins));
-  msg.textContent=match.lastMessage;msg.style.opacity=match.finished||match.transition?"1":"0.0";
-};
-const runtime=runMatch(canvas,render);
-const panel=document.querySelector("#panel");
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
-  const mode=b.dataset.mode;
-  if(mode==="restart"){runtime.restart();panel.innerHTML="<h2>ROULETTE ROAD</h2><p>Match restarted.</p>";return}
-  if(mode==="creator"){mountCreator(panel);return}
-  panel.innerHTML=mode==="training"?`<h2>TRAINING</h2><p>Training uses the same combat runtime.</p><div class="chips"><span>J LIGHT</span><span>K HEAVY</span><span>L SPECIAL</span><span>H GUARD</span><span>W JUMP</span></div>`:`<h2>VERSUS</h2><p>PLAYER 1 versus CPU. First fighter to two rounds wins.</p>`;
-});
+const screens={menu:document.querySelector("#menu"),select:document.querySelector("#select"),game:document.querySelector("#gameScreen"),info:document.querySelector("#info"),creator:document.querySelector("#creatorScreen")};
+const show=name=>Object.values(screens).forEach(s=>s.classList.toggle("active",s===screens[name]));
+const cards=document.querySelector("#characterCards");
+let p1Id="sol",p2Id="morrow",sideMode="cpu";
+cards.innerHTML=characters.map(c=>'<button class="character-card" data-character="'+c.id+'"><img src="'+c.portrait+'" alt="'+c.name+' portrait"><span>'+c.name+'</span><small>'+c.archetype+' · '+c.style+'</small></button>').join("");
+function updateSelect(){const a=characters.find(c=>c.id===p1Id),b=characters.find(c=>c.id===p2Id);document.querySelector("#p1Name").textContent=a.name;document.querySelector("#p1Style").textContent=a.style;document.querySelector("#p2Name").textContent=b.name;document.querySelector("#p2Style").textContent=b.style;document.querySelector("#p2Label").textContent=sideMode==="cpu"?"CPU":"PLAYER 2";cards.querySelectorAll(".character-card").forEach(card=>{card.classList.toggle("p1-selected",card.dataset.character===p1Id);card.classList.toggle("p2-selected",card.dataset.character===p2Id);});}
+cards.addEventListener("click",e=>{const id=e.target.closest("[data-character]")?.dataset.character;if(!id)return;if(e.shiftKey||e.ctrlKey)p2Id=id;else p1Id=id;updateSelect();});
+document.querySelectorAll("[data-side-mode]").forEach(b=>b.onclick=()=>{sideMode=b.dataset.sideMode;document.querySelectorAll("[data-side-mode]").forEach(x=>x.classList.toggle("selected",x===b));updateSelect();});updateSelect();
+
+const canvas=document.querySelector("#game"),ctx=canvas.getContext("2d"),stageImage=new Image();
+stageImage.decoding="async";stageImage.src=new URL("../assets/stages/roulette-road.svg",import.meta.url).href;
+const hp1=document.querySelector("#hp1"),hp2=document.querySelector("#hp2"),timer=document.querySelector("#timer"),wins1=document.querySelector("#wins1"),wins2=document.querySelector("#wins2"),roundMessage=document.querySelector("#roundMessage"),hudP1=document.querySelector("#hudP1"),hudP2=document.querySelector("#hudP2"),pauseOverlay=document.querySelector("#pauseOverlay"),trainingReadout=document.querySelector("#trainingReadout");
+let runtime=null,training=false;
+function renderMatch(p1,p2,combat,match){const t=performance.now()/1000,shake=combat.events.length?Math.min(12,combat.events.length*5):0;ctx.clearRect(0,0,1200,600);ctx.save();ctx.translate((Math.random()-.5)*shake,(Math.random()-.5)*shake);if(stageImage.complete&&stageImage.naturalWidth)ctx.drawImage(stageImage,0,0,1200,600);ctx.restore();drawFighter(ctx,p1,{id:p1Id},false,t);drawFighter(ctx,p2,{id:p2Id},false,t);if(combat.lastHit){ctx.save();ctx.globalAlpha=.95;ctx.textAlign="center";ctx.font="900 34px Impact,Arial";ctx.fillStyle=combat.lastHit.blocked?"#8ed1ff":"#fff1a8";ctx.fillText(combat.lastHit.blocked?"BLOCK!":"HIT!",600,155);ctx.strokeStyle=ctx.fillStyle;ctx.lineWidth=4;ctx.beginPath();ctx.arc(combat.lastHit.target.x,combat.lastHit.target.y-60,26+Math.sin(t*24)*5,0,Math.PI*2);ctx.stroke();ctx.restore();}hp1.style.width=Math.max(0,p1.health)+"%";hp2.style.width=Math.max(0,p2.health)+"%";timer.textContent=Math.ceil(match.time);wins1.textContent="● ".repeat(match.p1Wins)+"○ ".repeat(Math.max(0,2-match.p1Wins));wins2.textContent="● ".repeat(match.p2Wins)+"○ ".repeat(Math.max(0,2-match.p2Wins));roundMessage.textContent=match.lastMessage;roundMessage.classList.toggle("show",Boolean(match.transition||match.finished));if(training)trainingReadout.textContent="STATE "+p1.state.toUpperCase()+" · FRAME "+p1.frame+" · HP "+Math.ceil(p1.health)+" · HITSTUN "+p1.hitstun+" · ATTACK "+(p1.attack?.name||"—");}
+function startGame(isTraining=false){if(runtime?.stop)runtime.stop();training=isTraining;const a=characters.find(c=>c.id===p1Id),b=characters.find(c=>c.id===p2Id);hudP1.textContent=a.name;hudP2.textContent=b.name;document.querySelector("#controlStrip").textContent=sideMode==="local"?"P1 A/D W S H J K L · P2 ←/→ ↑ ↓ NUM0 NUM1 NUM2 NUM3":"A/D MOVE · W JUMP · S CROUCH · H GUARD · J LIGHT · K HEAVY · L SPECIAL";trainingReadout.classList.toggle("hidden",!training);pauseOverlay.classList.add("hidden");show("game");runtime=runMatch(canvas,renderMatch,{p1Id,p2Id,mode:isTraining?"training":sideMode});}
+document.querySelectorAll("[data-menu]").forEach(b=>b.onclick=()=>{const a=b.dataset.menu;if(a==="fight")show("select");else if(a==="training")startGame(true);else if(a==="creator"){show("creator");mountCreator(document.querySelector("#creatorMount"));}else if(a==="howto")show("info");});
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>show(b.dataset.back));
+document.querySelector("#launchFight").onclick=()=>startGame(false);
+document.querySelector("#pauseBtn").onclick=()=>{runtime?.togglePause();pauseOverlay.classList.toggle("hidden",!runtime?.isPaused());};
+document.querySelector("#resumeBtn").onclick=()=>{runtime?.togglePause();pauseOverlay.classList.add("hidden");};
+document.querySelector("#restartBtn").onclick=()=>{runtime?.restart();pauseOverlay.classList.add("hidden");};
+document.querySelector("#quitBtn").onclick=()=>{runtime?.stop();show("menu");};
+document.querySelector("#matchRestart").onclick=()=>runtime?.restart();
+document.querySelector("#matchTraining").onclick=()=>startGame(true);
+document.querySelector("#matchMenu").onclick=()=>{runtime?.stop();show("menu");};
+document.querySelector("#creatorBack").onclick=()=>show("menu");
+window.addEventListener("keydown",e=>{if(e.code==="Escape"&&screens.game.classList.contains("active")){runtime?.togglePause();pauseOverlay.classList.toggle("hidden",!runtime?.isPaused());}});
