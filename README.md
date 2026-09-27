@@ -28,3 +28,7 @@ The project is intentionally being built as real systems rather than a collectio
 8. Audio, effects, polish and validation
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+
+## Animation pipeline
+Character animation data is state-driven and frame-timed. Each state has its own frame count, FPS, loop behavior, and individual image path. Missing production frames safely fall back to the procedural silhouette until authored frames are present. The runtime preserves animation state and frame timing independently from combat timing.
