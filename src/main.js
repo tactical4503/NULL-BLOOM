@@ -1,5 +1,6 @@
 import "./style.css";
 import {runMatch} from "./game.js";
+import {mountCreator} from "./creator.js";
 
 const app=document.querySelector("#app");
 app.innerHTML=`
@@ -19,4 +20,4 @@ const canvas=document.querySelector("#game"),ctx=canvas.getContext("2d"),hp1=doc
 const render=(p1,p2,combat)=>{ctx.clearRect(0,0,1200,600);const draw=(p,flip)=>{ctx.save();ctx.translate(p.x,p.y);ctx.scale(flip?-1:1,1);ctx.fillStyle=p===p1?"#e7c83b":"#d85a4a";ctx.fillRect(-22,-104,44,65);ctx.fillStyle="#e5a982";ctx.fillRect(-16,-130,32,26);ctx.fillStyle="#315b86";ctx.fillRect(-17,-39,13,39);ctx.fillRect(4,-39,13,39);ctx.restore()};draw(p1,false);draw(p2,true);if(combat.lastHit){ctx.fillStyle="#fff1a8";ctx.font="bold 34px Arial";ctx.fillText("HIT!",p1.x<p2.x?p2.x-30:p1.x-30,180)}hp1.textContent=p1.health;hp2.textContent=p2.health};
 runMatch(canvas,render);
 const panel=document.querySelector("#panel");
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;panel.innerHTML=mode==="creator"?`<h2>FIGHTER CREATOR</h2><p>Modular fighter recipes are built from independent body, head, face, hair, outfit, footwear, accessory, weapon, marking, effect and palette assets.</p><div class="chips"><span>BODY</span><span>HEAD</span><span>FACE</span><span>HAIR</span><span>TOP</span><span>BOTTOM</span><span>FOOTWEAR</span><span>ACCESSORY</span><span>WEAPON</span><span>PALETTE</span></div>`:mode==="training"?`<h2>TRAINING</h2><p>Training is wired to the same combat simulation. Frame-data diagnostics, hitbox visualization, reset and dummy controls are the next layer.</p>`:`<h2>VERSUS</h2><p>Local match runtime is active. Player 1 uses A/D/W/J/K/L while the CPU controls Player 2.</p>`});
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{const mode=b.dataset.mode;if(mode==="creator"){mountCreator(panel);return}panel.innerHTML=mode==="training"?`<h2>TRAINING</h2><p>Training shares the same combat simulation. Frame-data inspection and hitbox visualization use the same runtime.</p>`:`<h2>VERSUS</h2><p>Local match runtime is active. Player 1 uses A/D/W/J/K/L while the CPU controls Player 2.</p>`});
