@@ -1,0 +1,1 @@
+{"id":"doll","name":"DOLL","archetype":"puppet","speed":5,"height":106,"visual":{"primary":"#efb6ca","secondary":"#5a355f","skin":"#c98472","accent":"#f4d45a"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
