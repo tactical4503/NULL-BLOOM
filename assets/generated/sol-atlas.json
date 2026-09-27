@@ -1,0 +1,1 @@
+{"source":"ChatGPT-generated NULL BLOOM SOL animation atlas","width":384,"height":480,"frameWidth":64,"frameHeight":80,"columns":6,"rows":6,"states":{"idle":[0,1],"walk":[2,3],"jump":[4,5],"crouch":[6],"guard":[7],"light":[8,9],"heavy":[10,11],"special":[12,13,14],"hit":[15,16],"knockdown":[17,18],"getup":[19,20],"victory":[21],"defeat":[22]}}
