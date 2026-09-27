@@ -1,0 +1,1 @@
+export function drawBox(ctx,box,kind){if(!box)return;ctx.save();ctx.globalAlpha=.28;ctx.fillStyle=kind==="hit"?"#f2cf42":"#58a8ff";ctx.fillRect(box.x,box.y,box.w,box.h);ctx.globalAlpha=.8;ctx.strokeStyle=kind==="hit"?"#fff0a0":"#b7dcff";ctx.strokeRect(box.x+.5,box.y+.5,box.w-1,box.h-1);ctx.restore();}
