@@ -1,0 +1,13 @@
+const KEY="null-bloom-fighter-v1";
+const options={body:["compact","athletic","heavy"],head:["round","square","long"],face:["bright","stern","strange"],hair:["short","wild","slick","long"],top:["jacket","tee","uniform","armor"],bottom:["pants","shorts","trousers"],footwear:["boots","sneakers","high-tops"],accessory:["gloves","belt","scarf","none"],weapon:["none","baton","blade","hammer"],marking:["none","stripe","stars","paint"],palette:["sunset","electric","candy","night"]};
+const defaults=Object.fromEntries(Object.keys(options).map(k=>[k,options[k][0]]));
+export function mountCreator(root){
+ let recipe=JSON.parse(localStorage.getItem(KEY)||"null")||{...defaults};
+ const render=()=>{
+  root.innerHTML="<div class=\"creator-head\"><div><h2>FIGHTER CREATOR</h2><p>Independent recipe slots. Your fighter autosaves locally.</p></div><div class=\"creator-actions\"><button data-action=\"random\">RANDOMIZE</button><button data-action=\"save\">SAVE</button><button data-action=\"export\">EXPORT</button><label class=\"import\">IMPORT<input id=\"creatorImport\" type=\"file\" accept=\".json\"></label></div></div><div class=\"creator-grid\">"+Object.entries(options).map(([key,vals])=>"<label>"+key.toUpperCase()+"<select data-key=\""+key+"\">"+vals.map(v=>"<option "+(recipe[key]===v?"selected":"")+">"+v+"</option>").join("")+"</select></label>").join("")+"</div><pre class=\"recipe-preview\">"+JSON.stringify(recipe,null,2)+"</pre>";
+ };
+ render();
+ root.onchange=e=>{const key=e.target.dataset.key;if(key){recipe[key]=e.target.value;localStorage.setItem(KEY,JSON.stringify(recipe));render()}};
+ root.onclick=e=>{const action=e.target.dataset.action;if(action==="random"){for(const k in options)recipe[k]=options[k][Math.floor(Math.random()*options[k].length)];localStorage.setItem(KEY,JSON.stringify(recipe));render()}if(action==="save"){localStorage.setItem(KEY,JSON.stringify(recipe));render()}if(action==="export"){const blob=new Blob([JSON.stringify(recipe,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="null-bloom-fighter.json";a.click();URL.revokeObjectURL(a.href)}};
+ root.addEventListener("change",e=>{if(e.target.id==="creatorImport"&&e.target.files[0]){const fr=new FileReader();fr.onload=()=>{try{const incoming=JSON.parse(fr.result);for(const k of Object.keys(options))if(options[k].includes(incoming[k]))recipe[k]=incoming[k];localStorage.setItem(KEY,JSON.stringify(recipe));render()}catch{root.insertAdjacentHTML("afterbegin","<p class=\"error\">Invalid fighter recipe.</p>")}};fr.readAsText(e.target.files[0])}});
+}
