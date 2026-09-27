@@ -1,0 +1,8 @@
+{
+  "id":"example",
+  "name":"UNASSIGNED",
+  "archetype":"rushdown",
+  "palette":[],
+  "animations":"animations.json",
+  "attacks":"attacks.json"
+}
