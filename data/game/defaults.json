@@ -1,0 +1,1 @@
+{"version":1,"roundTime":99,"roundsToWin":2,"stage":{"width":1200,"ground":510,"bounds":[70,1130]},"physics":{"gravity":0.75,"jumpVelocity":-15},"inputBufferFrames":6}
