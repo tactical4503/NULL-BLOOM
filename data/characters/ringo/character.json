@@ -1,0 +1,1 @@
+{"id":"ringo","name":"RINGO","archetype":"trickster","speed":6,"height":100,"visual":{"primary":"#f06aa8","secondary":"#2e7b8f","skin":"#e1a37d","accent":"#f5e26a"},"attacks":"../example/attacks.json","animations":"../example/animations.json"}
