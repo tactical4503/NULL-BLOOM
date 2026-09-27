@@ -1,5 +1,5 @@
 {
-  "light":{"startup":5,"active":3,"recovery":9,"damage":5,"knockback":2},
-  "heavy":{"startup":11,"active":5,"recovery":18,"damage":12,"knockback":6},
-  "special":{"startup":9,"active":8,"recovery":22,"damage":16,"knockback":8}
+  "light":{"state":"light","startup":5,"active":3,"recovery":9,"damage":6,"hitstun":12,"knockback":4,"launch":2,"range":58,"height":42},
+  "heavy":{"state":"heavy","startup":11,"active":5,"recovery":18,"damage":13,"hitstun":18,"knockback":8,"launch":5,"range":70,"height":50},
+  "special":{"state":"special","startup":9,"active":8,"recovery":22,"damage":16,"hitstun":22,"knockback":10,"launch":8,"range":100,"height":60}
 }
